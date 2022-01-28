@@ -32,11 +32,13 @@ List <String> WrongINterval = ["Прима", "Малая секунда", "Бо�
 
 showAlertDialogCorrect(BuildContext Dialogcontext) {
   AlertDialog alert = AlertDialog(
-    title: Text("Результат"),
+    title: Text("Правильно!",
+      textAlign: TextAlign.center,),
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20.0))
     ),
-    content: Text("Правильно!"),
+    content: Text("${WrongINterval[NumberOfInterval-1]}.",
+      textAlign: TextAlign.center,),
     actions: [
       ],
   );
@@ -52,11 +54,15 @@ showAlertDialogCorrect(BuildContext Dialogcontext) {
 
 showAlertDialogWrong(BuildContext Dialogcontext) {
   AlertDialog alert = AlertDialog(
-    title: Text("Результат"),
+    title: Text("Неверно.",
+        textAlign: TextAlign.center,
+    ),
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20.0))
     ),
-    content: Text("Неверно."),
+    content: Text("${WrongINterval[NumberOfInterval-1]}.",
+      textAlign: TextAlign.center,
+    ),
     actions: [
     ],);
   // show the dialog
@@ -69,6 +75,55 @@ showAlertDialogWrong(BuildContext Dialogcontext) {
   );
 }
 
+
+class _InhVisButton extends InheritedWidget {
+  _InhVisButton({
+    Key key,
+    @required Widget child,
+    @required this.data,
+  }) : super(key: key, child: child);
+
+  final InhVisButtonState data;
+
+  @override
+  bool updateShouldNotify(_InhVisButton oldWidget) {
+    return true;
+  }}
+
+
+class InhVisButton extends StatefulWidget {
+
+  InhVisButton({
+    Key key,
+    this.child,
+  }): super(key: key);
+
+  final Widget child;
+
+  @override
+  InhVisButtonState createState() => new InhVisButtonState();
+
+  static InhVisButtonState of (BuildContext Vcontext) {
+    return (Vcontext.dependOnInheritedWidgetOfExactType<_InhVisButton>()).data;
+  }
+}
+
+class InhVisButtonState extends State<InhVisButton>{
+
+  void OnPress(){
+    setState(() {
+      visibility_buttonList = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext Vcontext){
+    return new _InhVisButton(
+      data: this,
+      child: widget.child,
+    );
+  }
+}
 
 
 class _MyInherited extends InheritedWidget {
@@ -157,21 +212,24 @@ class MyInheritedWidgetState extends State<MyInheritedWidget>{
   }
 }
 
-class HomePage extends StatefulWidget{
+class new_interval_button extends StatelessWidget{
 
-  @override
-  HomePageState createState() => new HomePageState();
-}
-
-class HomePageState extends State<HomePage>{
+  bool visibility = true;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: Color(0xFF014B88), // background
+        ),
+      child:
+        Text('Новый интервал'),
+      onPressed: () async {
+          PlayNotes(FirstNote, 0);
+          PlayNotes2(SecondNote, 0);
+    },
     );
   }
-
 }
 
 class b_n extends StatelessWidget{
@@ -215,9 +273,9 @@ class b_n extends StatelessWidget{
                 Future.delayed(Duration(seconds: 1), (){
                   Navigator.of(context, rootNavigator: true).pop();
                 });
-                Future.delayed(Duration(milliseconds: 1500),(){
+                Future.delayed(Duration(milliseconds: 1200),(){
                 PlayNotes(FirstNote, 0);
-                PlayNotes2(SecondNote, 1300);});
+                PlayNotes2(SecondNote, 1200);});
                 print("новый интервал: ${NumberOfInterval}");
               },
             )));
@@ -274,7 +332,7 @@ class topButtonState extends State<topButton>{
                             print(NumberOfInterval);
                           });*/
                           PlayNotes(FirstNote, 0);
-                          PlayNotes2(SecondNote, 1300);
+                          PlayNotes2(SecondNote, 1200);
                         },
                         child: Text('Восх.', style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w300)),
                       ))),
@@ -291,7 +349,7 @@ class topButtonState extends State<topButton>{
                           onPressed:
                               () async {
                             PlayNotes(SecondNote, 0);
-                            PlayNotes2(FirstNote, 1300);
+                            PlayNotes2(FirstNote, 1200);
                           },
                           child: Text('Нисх.', style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w300)),
                         ))),
@@ -380,7 +438,10 @@ class empty extends StatelessWidget{
   }
 }
 
+bool visibility_buttonList = false;
+
 class buttonList extends StatelessWidget{
+
   Widget p1 = isCelected[0]? b_n('p1', 1) : empty();
   Widget m2 = isCelected[1]? b_n('m2', 2) : Container(
   );
@@ -396,8 +457,20 @@ class buttonList extends StatelessWidget{
   buttonList(/*this.prim, this.msec, this.bsec, this.mter, this.bter, this.kvar, this.kvin, this.msex, this.bsex, this.msept, this.bsept*/);
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext Vcontext) {
+    final InhVisButtonState statet = InhVisButton.of(Vcontext);
+    return (!visibility_buttonList)? ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: Color(0xFF014B88), // background
+      ),
+      child:
+      Text('Новый интервал'),
+      onPressed: () async {
+        statet.OnPress();
+        PlayNotes(FirstNote, 150);
+        PlayNotes2(SecondNote, 1200);
+      },
+    ) : Column(
         mainAxisAlignment: MainAxisAlignment.start,
         verticalDirection: VerticalDirection.down,
         children: <Widget> [
@@ -440,15 +513,15 @@ void main(){
   print("SecondNote: $SecondNote");
   print("интервал: ${NumberOfInterval}");
   print(ListOfForbiddenInterval);
-  Future.delayed(Duration(milliseconds: 1500),(){
+  /*Future.delayed(Duration(milliseconds: 1500),(){
     PlayNotes(FirstNote, 0);
-    PlayNotes2(SecondNote, 1300);});
+    PlayNotes2(SecondNote, 1300);});*/
   runApp(
       MaterialApp(
           routes: {
             '/':(BuildContext context) => MyApp(),
             '/second':(BuildContext context) => SecondScreen()
-          }
+          },
       )
   );
 }
@@ -519,7 +592,9 @@ class _MyAppState extends State<MyApp> {
                 verticalDirection: VerticalDirection.down,
                 children:[
                   topButton(),
-                  buttonList(),
+                  InhVisButton(
+                  child:
+                  buttonList()),
                   Expanded(
                     child: Container()
                   ),
@@ -541,6 +616,7 @@ class _MyAppState extends State<MyApp> {
             appBar: AppBar(backgroundColor: Colors.lightBlue[900],shadowColor: Colors.black, title:Text("Тренажер"), leading: Container(), actions: <Widget>[
               AppBarSettingsButton()
             ]),
+              drawer: Drawer()
           )),
     );
   }
@@ -568,7 +644,8 @@ class SecondScreen extends StatelessWidget {
     return MaterialApp(
         home: MyInheritedWidget(
         child: Scaffold(
-        body: SecondScreen1()
+        body: SecondScreen1(),
+            drawer: Drawer()
     )
     ));
   }
@@ -580,6 +657,7 @@ class SecondScreen1 extends StatelessWidget {
     final MyInheritedWidgetState state = MyInheritedWidget.of(context);
     return
       Scaffold(
+          drawer: Drawer(),
       body: Column(
           children: <Widget> [
             Container(
@@ -616,9 +694,9 @@ class SecondScreen1 extends StatelessWidget {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: (){
-              state.MakeInterval();
+              visibility_buttonList = false;
               BoolToDigit();
-
+              state.MakeInterval();
               Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
             },
           )
@@ -1012,6 +1090,155 @@ class b7_State extends State<b_7>{
   }
 }
 
+class ThreeScreen extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        drawer: Drawer(),
+        body:
+        Container(
+            padding: EdgeInsets.all(10),
+    child:
+        Column(
+          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DropDownDemo(),
+            quanityChord(),
+            Expanded(
+              child:
+                Container()
+            ),
+            PlayButton()
+          ],
+        )),
+    appBar: AppBar(backgroundColor: Colors.lightBlue[900],shadowColor: Colors.black, title:Text("Тренажер Гармонии")));
+  }
+}
+
 List<int> ListOfForbiddenInterval = [];
 
 
+class PlayButton extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+        child:
+        ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue[900], // background
+            ),
+        onPressed: (){},
+        child: Text('Начать')
+        ));
+  }
+}
+
+
+
+class DropDownDemo extends StatefulWidget {
+  @override
+  _DropDownDemoState createState() => _DropDownDemoState();
+}
+
+class _DropDownDemoState extends State<DropDownDemo> {
+  String _chosenValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return
+    Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('Тональность:'),
+    Row(
+    children:
+    [
+      Center(
+        child: Container(
+          padding: const EdgeInsets.all(0.0),
+          child: DropdownButton<String>(
+            value: _chosenValue,
+            //elevation: 5,
+            style: TextStyle(color: Colors.black),
+            items: <String>[
+              'C-dur', 'D-dur','E-dur', 'F-dur','G-dur', 'A-dur','B-dur', 'Случайная'
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            hint: Text(
+              "",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600),
+            ),
+            onChanged: (String value) {
+              setState(() {
+                _chosenValue = value;
+              });
+            },
+      )),
+    ),
+      Container(
+        margin: EdgeInsets.only(right:50),
+      )
+
+    ]
+    )]);
+  }
+}
+
+class quanityChord extends StatefulWidget {
+  @override
+  quanityChordState createState() => quanityChordState();
+}
+
+class quanityChordState extends State<quanityChord>{
+
+  int cnt = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children:
+        [
+          Text('Kоличество \n аккордов:'),
+          Row(
+          children: [
+          IconButton (
+              icon: Icon(Icons.arrow_left),
+              onPressed: (){
+                setState((){
+                  if (cnt > 0){cnt--;}
+                });
+              }
+          ),
+          Container(
+              /*decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueAccent)
+              ),*/
+              child:
+              Text('$cnt')
+          ),
+          IconButton(
+              icon: Icon(Icons.arrow_right),
+              onPressed: (
+                  ){
+                setState((){
+                  cnt++;
+                });
+              }
+          ),
+            Container(
+              margin: EdgeInsets.only(right:48),
+
+            )
+        ]
+          )]);
+  }
+}
